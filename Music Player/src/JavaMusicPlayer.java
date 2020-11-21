@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.*;
+import java.util.Scanner;
 
 public class JavaMusicPlayer extends JFrame {
 
@@ -8,23 +10,27 @@ public class JavaMusicPlayer extends JFrame {
 	ControlPanel controlPanel;
 	ListPanel listPanel;
 	
+	int minimumHeight = 186 + 39;
+
 	void Model() {
-		
-		
+
+		new Config();
+
+
 		
 	}
-	
-	
-	
+
 	void View() {
-		
+
 		setTitle("Java Music Player");
-		setMinimumSize(new Dimension(400, controlPanel.initialHeight + 38));
+		setMinimumSize(new Dimension(400, minimumHeight));
 		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
-		getContentPane().setBackground(Color.black);
-		
+		detailPanel = new DetailPanel();
+		controlPanel = new ControlPanel();
+		listPanel = new ListPanel();
+
 		add(detailPanel);
 		add(controlPanel);
 		add(listPanel);
@@ -32,21 +38,26 @@ public class JavaMusicPlayer extends JFrame {
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
-				
+
 				int contentPaneWidth = getContentPane().getWidth();
-				int contentPaneinitialHeight = getContentPane().getHeight();
-				
-				controlPanel.setMinimumSize(new Dimension(contentPaneWidth, controlPanel.initialHeight));
-				controlPanel.setMaximumSize(new Dimension(contentPaneWidth, controlPanel.initialHeight));
-				
-				if (contentPaneinitialHeight >= detailPanel.initialHeight + controlPanel.initialHeight || listPanel.getHeight() > 10) {
-					detailPanel.setMinimumSize(new Dimension(contentPaneWidth, detailPanel.initialHeight ));
-					detailPanel.setMaximumSize(new Dimension(contentPaneWidth, detailPanel.initialHeight ));
-					detailPanel.setPreferredSize(new Dimension(contentPaneWidth, detailPanel.initialHeight ));
+				int contentPaneHeight = getContentPane().getHeight();
+
+				controlPanel.setMinimumSize(new Dimension(contentPaneWidth, ControlPanel.defaultHeight));
+				controlPanel.setMaximumSize(new Dimension(contentPaneWidth, ControlPanel.defaultHeight));
+
+
+				if (contentPaneHeight >= detailPanel.defaultHeight + ControlPanel.defaultHeight
+						|| listPanel.getHeight() > 10) {
+					detailPanel.setMinimumSize(new Dimension(contentPaneWidth, detailPanel.defaultHeight));
+					detailPanel.setMaximumSize(new Dimension(contentPaneWidth, detailPanel.defaultHeight));
+					detailPanel.setPreferredSize(new Dimension(contentPaneWidth, detailPanel.defaultHeight));
 				} else {
-					detailPanel.setMinimumSize(new Dimension(contentPaneWidth, contentPaneinitialHeight - controlPanel.initialHeight));
-					detailPanel.setMaximumSize(new Dimension(contentPaneWidth, contentPaneinitialHeight - controlPanel.initialHeight));
-					detailPanel.setPreferredSize(new Dimension(contentPaneWidth, contentPaneinitialHeight - controlPanel.initialHeight));
+					detailPanel.setMinimumSize(
+							new Dimension(contentPaneWidth, contentPaneHeight - ControlPanel.defaultHeight));
+					detailPanel.setMaximumSize(
+							new Dimension(contentPaneWidth, contentPaneHeight - ControlPanel.defaultHeight));
+					detailPanel.setPreferredSize(
+							new Dimension(contentPaneWidth, contentPaneHeight - ControlPanel.defaultHeight));
 				}
 			}
 		});
@@ -55,22 +66,12 @@ public class JavaMusicPlayer extends JFrame {
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
-	
-	
-	
+
 	void Control() {
-		
 
 	}
 
-	
-
 	JavaMusicPlayer() {
-		
-		detailPanel = new DetailPanel();
-		controlPanel = new ControlPanel();
-		listPanel = new ListPanel();
-		
 		Model();
 		View();
 		Control();

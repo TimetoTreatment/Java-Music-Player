@@ -1,6 +1,5 @@
 import java.awt.*;
 import java.awt.event.*;
-
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -8,8 +7,9 @@ public class DetailPanel extends JPanel {
 
 	final int defaultHeight = 150;
 
-	private JLabel detailMusicName = new JLabel("Seattle Alone");
-	private JLabel detailMusicAuthor = new JLabel("∫ºª°∞£ªÁ√·±‚");
+	private Image albumCoverImage = new ImageIcon("defaultAlbumCover.png").getImage();
+	private JLabel detailMusicName = new JLabel("Music Name");
+	private JLabel detailMusicAuthor = new JLabel("Music Author");
 	private JLabel detailAlbumName = new JLabel("Album Name");
 
 	void View() {
@@ -25,17 +25,16 @@ public class DetailPanel extends JPanel {
 				super.paintComponent(_g);
 
 				Graphics2D g = (Graphics2D) _g;
-				Image image = new ImageIcon("defaultAlbumCover.png").getImage();
 
-				int padding = 25;
-				int imageWidth = (defaultHeight - padding * 2) * image.getWidth(this) / image.getHeight(this);
+				int padding = 30;
+				int imageWidth = (defaultHeight - padding * 2) * albumCoverImage.getWidth(this) / albumCoverImage.getHeight(this);
 
 				setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(padding, padding, padding, padding),
 						new LineBorder(Color.black, 1)));
 
-				g.drawImage(image, (defaultHeight - imageWidth) / 2, padding, (defaultHeight + imageWidth) / 2,
-						getHeight() - padding, 0, 0, image.getWidth(this),
-						image.getHeight(this) * (getHeight() - padding * 2) / (defaultHeight - padding * 2), this);
+				g.drawImage(albumCoverImage, (defaultHeight - imageWidth) / 2, padding, (defaultHeight + imageWidth) / 2,
+						getHeight() - padding, 0, 0, albumCoverImage.getWidth(this),
+						albumCoverImage.getHeight(this) * (getHeight() - padding * 2) / (defaultHeight - padding * 2), this);
 			}
 		};
 
@@ -61,7 +60,7 @@ public class DetailPanel extends JPanel {
 		detailMusicName.setMaximumSize(new Dimension(650, 50));
 		detailMusicName.setPreferredSize(new Dimension(650, 50));
 		detailMusicName.setBorder(new EmptyBorder(0, 20, 0, 20));
-		detailMusicName.setFont(new Font("Malgun Gothic", Font.BOLD, 32));
+		detailMusicName.setFont(new Font("Malgun Gothic", Font.BOLD, 36));
 		musicDetail.add(detailMusicName);
 
 		detailMusicAuthor.setMinimumSize(new Dimension(650, 50));
@@ -102,23 +101,28 @@ public class DetailPanel extends JPanel {
 	}
 
 	class Control {
+		
+		void SetAlbumCover(String filename) {
+			albumCoverImage = new ImageIcon(filename).getImage();
+		}
+		
 		void SetMusicName(String musicName) {
 			detailMusicName.setText(musicName);
 		}
 
 		void SetMusicAuthor(String musicAuthor) {
 			detailMusicAuthor.setText(musicAuthor);
-
 		}
 
 		void SetAlbumName(String albumName) {
 			detailAlbumName.setText(albumName);
 		}
-
 	}
 
 	DetailPanel() {
+		
 		if (Config.debug == false) {
+			
 			detailMusicName.setOpaque(true);
 			detailMusicName.setBackground(Color.red);
 
