@@ -1,23 +1,28 @@
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import java.util.Scanner;
+import java.awt.Dimension;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 public class JavaMusicPlayer extends JFrame {
 
-	DetailPanel detailPanel;
-	ControlPanel controlPanel;
-	ListPanel listPanel;
-	
-	int minimumHeight = 186 + 39;
+	private MusicManager musicManager;
+	private DetailPanel detailPanel;
+	private ControlPanel controlPanel;
+	private ListPanel listPanel;
 
-	void Model() {
+	final int minimumHeight = 186 + 39;
+
+	JavaMusicPlayer() {
 
 		new Config();
 
+		musicManager = new MusicManager();
+		musicManager.Open("s.mp3");
 
-		
+		View();
+		Update();
 	}
 
 	void View() {
@@ -26,9 +31,9 @@ public class JavaMusicPlayer extends JFrame {
 		setMinimumSize(new Dimension(400, minimumHeight));
 		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		
-		detailPanel = new DetailPanel();
-		controlPanel = new ControlPanel();
+
+		detailPanel = new DetailPanel(musicManager);
+		controlPanel = new ControlPanel(musicManager);
 		listPanel = new ListPanel();
 
 		add(detailPanel);
@@ -44,7 +49,6 @@ public class JavaMusicPlayer extends JFrame {
 
 				controlPanel.setMinimumSize(new Dimension(contentPaneWidth, ControlPanel.defaultHeight));
 				controlPanel.setMaximumSize(new Dimension(contentPaneWidth, ControlPanel.defaultHeight));
-
 
 				if (contentPaneHeight >= detailPanel.defaultHeight + ControlPanel.defaultHeight
 						|| listPanel.getHeight() > 10) {
@@ -67,14 +71,14 @@ public class JavaMusicPlayer extends JFrame {
 		setVisible(true);
 	}
 
-	void Control() {
-
-	}
-
-	JavaMusicPlayer() {
-		Model();
-		View();
-		Control();
+	void Update() {
+		new Thread(() -> {
+			for (;;) {
+				detailPanel.SetTitle(musicManager.GetTitle());
+				detailPanel.SetArtist(musicManager.GetArtist());
+				detailPanel.SetAlbum(musicManager.GetAlbum());
+			}
+		}).start();
 	}
 
 	public static void main(String[] args) {

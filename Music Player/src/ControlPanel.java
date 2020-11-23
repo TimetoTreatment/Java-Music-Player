@@ -1,8 +1,5 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -10,18 +7,13 @@ public class ControlPanel extends JPanel {
 
 	final static int defaultHeight = 130;
 
-	private int musicPos = 50;
-	private int musicLength = 100;
-	private double trackBarPos = 50;
 	private JPanel trackBar;
 	private JPanel controller;
+	private JButton playMusic;
+	private MusicManager musicManager;
 
-	class Model {
+	void Draw() {
 
-	}
-
-	void View() {
-		
 		setPreferredSize(new Dimension(800, defaultHeight));
 		setBackground(Config.backgroundColor);
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -56,7 +48,7 @@ public class ControlPanel extends JPanel {
 
 				g.setColor(new Color(0, 0, 0));
 				g.fillRect(paddingLeftRight, paddingTopBottom,
-						(int) (trackBarPos * getWidth() / 100) - 2 * paddingLeftRight, 20);
+						(int) (musicManager.GetCurrentPosition() * (getWidth() - 2 * paddingLeftRight)), 20);
 			}
 		};
 
@@ -67,10 +59,10 @@ public class ControlPanel extends JPanel {
 		add(trackBar);
 
 		controller = new JPanel();
-		
+
 		controller.setLayout(new FlowLayout(FlowLayout.CENTER, 25, 0));
 
-		//controller.setBackground(Color.red);
+		// controller.setBackground(Color.red);
 		controller.setBackground(Config.backgroundColor);
 		controller.setMinimumSize(new Dimension(800, 60));
 		controller.setMaximumSize(new Dimension(800, 60));
@@ -93,7 +85,7 @@ public class ControlPanel extends JPanel {
 		prevMusic.setPreferredSize(new Dimension(50, 50));
 		controller.add(prevMusic);
 
-		JButton playMusic = new JButton("play") {
+		playMusic = new JButton("play") {
 			@Override
 			public void paintComponent(Graphics _g) {
 				super.paintComponent(_g);
@@ -127,20 +119,76 @@ public class ControlPanel extends JPanel {
 		nextMusic.setPreferredSize(new Dimension(50, 50));
 		controller.add(nextMusic);
 
+		new Thread(() -> {
+			for (;;) {
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+				trackBar.repaint();
+			}
+		}).start();
+
+		AddTrackbarListeners();
+		AddControllerListeners();
+
 		add(controller);
 	}
 
-	class Control {
-		void SetTrackBar(int pos, int length) {
-			musicPos = pos;
-			musicLength = length;
-			trackBarPos = musicPos * 100 / musicLength;
-		}
+	void AddTrackbarListeners() {
+
+		trackBar.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+				musicManager.Seek((double) (e.getX() - 49) / 700);
+				musicManager.GetAlbumCover();
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+	}
+
+	void AddControllerListeners() {
+
+		playMusic.addActionListener((e) -> {
+			if (musicManager.IsPlaying())
+				musicManager.Pause();
+			else
+				musicManager.Play();
+		});
 
 	}
 
-	ControlPanel() {
-		View();
+	ControlPanel(MusicManager _musicManager) {
+		musicManager = _musicManager;
+		Draw();
 	}
 
 }

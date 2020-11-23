@@ -7,12 +7,13 @@ public class DetailPanel extends JPanel {
 
 	final int defaultHeight = 150;
 
+	private MusicManager musicManager;
 	private Image albumCoverImage = new ImageIcon("defaultAlbumCover.png").getImage();
-	private JLabel detailMusicName = new JLabel("Music Name");
-	private JLabel detailMusicAuthor = new JLabel("Music Author");
+	private JLabel detailMusicTitle = new JLabel("Music Name");
+	private JLabel detailMusicArtist = new JLabel("Music Author");
 	private JLabel detailAlbumName = new JLabel("Album Name");
 
-	void View() {
+	void Draw() {
 
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		setPreferredSize(new Dimension(800, defaultHeight));
@@ -26,15 +27,22 @@ public class DetailPanel extends JPanel {
 
 				Graphics2D g = (Graphics2D) _g;
 
-				int padding = 30;
-				int imageWidth = (defaultHeight - padding * 2) * albumCoverImage.getWidth(this) / albumCoverImage.getHeight(this);
+				albumCoverImage = musicManager.GetAlbumCover();
 
-				setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(padding, padding, padding, padding),
+				if (albumCoverImage == null)
+					albumCoverImage = new ImageIcon("defaultAlbumCover.png").getImage();
+
+				int padding = 30;
+				int imageWidth = (defaultHeight - padding * 2) * albumCoverImage.getWidth(this)
+						/ albumCoverImage.getHeight(this);
+
+				setBorder(new CompoundBorder(new EmptyBorder(padding, padding, padding, padding),
 						new LineBorder(Color.black, 1)));
 
-				g.drawImage(albumCoverImage, (defaultHeight - imageWidth) / 2, padding, (defaultHeight + imageWidth) / 2,
-						getHeight() - padding, 0, 0, albumCoverImage.getWidth(this),
-						albumCoverImage.getHeight(this) * (getHeight() - padding * 2) / (defaultHeight - padding * 2), this);
+				g.drawImage(albumCoverImage, (defaultHeight - imageWidth) / 2, padding,
+						(defaultHeight + imageWidth) / 2, getHeight() - padding, 0, 0, albumCoverImage.getWidth(this),
+						albumCoverImage.getHeight(this) * (getHeight() - padding * 2) / (defaultHeight - padding * 2),
+						this);
 			}
 		};
 
@@ -56,19 +64,19 @@ public class DetailPanel extends JPanel {
 			}
 		});
 
-		detailMusicName.setMinimumSize(new Dimension(650, 50));
-		detailMusicName.setMaximumSize(new Dimension(650, 50));
-		detailMusicName.setPreferredSize(new Dimension(650, 50));
-		detailMusicName.setBorder(new EmptyBorder(0, 20, 0, 20));
-		detailMusicName.setFont(new Font("Malgun Gothic", Font.BOLD, 36));
-		musicDetail.add(detailMusicName);
+		detailMusicTitle.setMinimumSize(new Dimension(650, 50));
+		detailMusicTitle.setMaximumSize(new Dimension(650, 50));
+		detailMusicTitle.setPreferredSize(new Dimension(650, 50));
+		detailMusicTitle.setBorder(new EmptyBorder(0, 20, 0, 20));
+		detailMusicTitle.setFont(new Font("Malgun Gothic", Font.BOLD, 36));
+		musicDetail.add(detailMusicTitle);
 
-		detailMusicAuthor.setMinimumSize(new Dimension(650, 50));
-		detailMusicAuthor.setMaximumSize(new Dimension(650, 50));
-		detailMusicAuthor.setPreferredSize(new Dimension(650, 50));
-		detailMusicAuthor.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
-		detailMusicAuthor.setBorder(new EmptyBorder(0, 20, 0, 20));
-		musicDetail.add(detailMusicAuthor);
+		detailMusicArtist.setMinimumSize(new Dimension(650, 50));
+		detailMusicArtist.setMaximumSize(new Dimension(650, 50));
+		detailMusicArtist.setPreferredSize(new Dimension(650, 50));
+		detailMusicArtist.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
+		detailMusicArtist.setBorder(new EmptyBorder(0, 20, 0, 20));
+		musicDetail.add(detailMusicArtist);
 
 		detailAlbumName.setMinimumSize(new Dimension(650, 50));
 		detailAlbumName.setMaximumSize(new Dimension(650, 50));
@@ -82,13 +90,13 @@ public class DetailPanel extends JPanel {
 			@Override
 			public void componentResized(ComponentEvent e) {
 
-				detailMusicName.setMinimumSize(new Dimension(e.getComponent().getWidth(), 50));
-				detailMusicName.setMaximumSize(new Dimension(e.getComponent().getWidth(), 50));
-				detailMusicName.setPreferredSize(new Dimension(e.getComponent().getWidth(), 50));
+				detailMusicTitle.setMinimumSize(new Dimension(e.getComponent().getWidth(), 50));
+				detailMusicTitle.setMaximumSize(new Dimension(e.getComponent().getWidth(), 50));
+				detailMusicTitle.setPreferredSize(new Dimension(e.getComponent().getWidth(), 50));
 
-				detailMusicAuthor.setMinimumSize(new Dimension(e.getComponent().getWidth(), 40));
-				detailMusicAuthor.setMaximumSize(new Dimension(e.getComponent().getWidth(), 40));
-				detailMusicAuthor.setPreferredSize(new Dimension(e.getComponent().getWidth(), 40));
+				detailMusicArtist.setMinimumSize(new Dimension(e.getComponent().getWidth(), 40));
+				detailMusicArtist.setMaximumSize(new Dimension(e.getComponent().getWidth(), 40));
+				detailMusicArtist.setPreferredSize(new Dimension(e.getComponent().getWidth(), 40));
 
 				detailAlbumName.setMinimumSize(new Dimension(e.getComponent().getWidth(), 60));
 				detailAlbumName.setMaximumSize(new Dimension(e.getComponent().getWidth(), 60));
@@ -100,40 +108,39 @@ public class DetailPanel extends JPanel {
 		add(musicDetail);
 	}
 
-	class Control {
-		
-		void SetAlbumCover(String filename) {
-			albumCoverImage = new ImageIcon(filename).getImage();
-		}
-		
-		void SetMusicName(String musicName) {
-			detailMusicName.setText(musicName);
-		}
-
-		void SetMusicAuthor(String musicAuthor) {
-			detailMusicAuthor.setText(musicAuthor);
-		}
-
-		void SetAlbumName(String albumName) {
-			detailAlbumName.setText(albumName);
-		}
+	void SetAlbumCover(String filename) {
+		albumCoverImage = new ImageIcon(filename).getImage();
 	}
 
-	DetailPanel() {
-		
-		if (Config.debug == false) {
-			
-			detailMusicName.setOpaque(true);
-			detailMusicName.setBackground(Color.red);
+	void SetTitle(String title) {
+		detailMusicTitle.setText(title);
+	}
 
-			detailMusicAuthor.setOpaque(true);
-			detailMusicAuthor.setBackground(Color.green);
+	void SetArtist(String artist) {
+		detailMusicArtist.setText(artist);
+	}
+
+	void SetAlbum(String album) {
+		detailAlbumName.setText(album);
+	}
+
+	DetailPanel(MusicManager _musicManager) {
+
+		musicManager = _musicManager;
+
+		if (Config.debug == false) {
+
+			detailMusicTitle.setOpaque(true);
+			detailMusicTitle.setBackground(Color.red);
+
+			detailMusicArtist.setOpaque(true);
+			detailMusicArtist.setBackground(Color.green);
 
 			detailAlbumName.setOpaque(true);
 			detailAlbumName.setBackground(Color.cyan);
 		}
 
-		View();
+		Draw();
 	}
 
 }
